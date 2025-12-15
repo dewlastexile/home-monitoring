@@ -1,0 +1,20 @@
+groups:
+  - name: ContainerAlerts
+    rules:
+      - alert: HighContainerCPU
+        expr: rate(container_cpu_usage_seconds_total{image!=""}[1m]) > 0.8
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Высокая загрузка CPU контейнером"
+          description: "Контейнер {{ $labels.name }} потребляет > 80% CPU"
+
+      - alert: ContainerDown
+        expr: absent(container_last_seen{image!=""})
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Контейнер недоступен"
+          description: "Контейнер {{ $labels.name }} не отвечает"
